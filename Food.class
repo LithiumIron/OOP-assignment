@@ -1,0 +1,21 @@
+
+
+public class Food {
+	private String[] snacks = new String{"Popcorn","Hotdog",
+										"French Fries","Chicken Meatball",
+										"Nugget"};
+	private String[] drinks = new String{"Sprite","Cola","100 Plus",
+										"Water","Pepsi"};
+	private String[] combo = new String();
+	private int static orderNo=0;
+	private String[] order=new String[orderNo];
+
+    public Food() {
+    	this(0);
+    }
+    public Food(int i){
+    	
+    }
+    
+    
+}
