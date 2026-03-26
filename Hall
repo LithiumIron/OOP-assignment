@@ -1,0 +1,24 @@
+
+public class Hall {
+	private String hallID;
+	private int capacity;
+	private String layout;
+
+	//constructor
+    public Hall(String hallID,int capacity, String layout) {
+    	this.hallID = hallID;
+    	this.capacity = capacity;
+    	this.layout = layout;
+    }
+    
+    //getter
+    public String getHallID(){return hallID;}
+    public int getCapacity(){return capacity;}
+    public String getLayout(){return layout;}
+    
+    //setter
+    public void setHallID(String hallID){this.hallID = hallID;}
+    public void setCapacity(int capacity){this.capacity = capacity;}
+    public void setLayout(String layout){this.layout = layout;}
+    
+}
