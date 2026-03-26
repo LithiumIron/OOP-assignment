@@ -1,0 +1,25 @@
+
+public class TicketValidation {
+	
+	//data properties
+	private String validationID;
+	private Ticket ticket;
+	private boolean isValid;
+	
+	public TicketValidation(String validationID, Ticket ticket){
+		this.validationID = validationID;
+		this.ticket = ticket;
+		this.isValid = false;
+	}
+	
+	public void validateTicket(){
+		if(!ticket.isUsed()){
+			ticket.setUsed(true);
+			isValid = true;
+			System.out.println("Ticket valid!");
+		}else{
+			System.out.println("Ticket already used!");
+		}
+	}
+	
+}
