@@ -1,0 +1,38 @@
+public class Movie {
+	private String movieID;
+	private String movieTitle;
+	private String genre;
+	private int duration;
+	private String ageRating;
+	private String status;
+
+	//constructor
+	public Movie(String movieID,String movieTitle,String genre,int duration,String ageRating,String status){
+    	this.movieID = movieID;
+    	this.movieTitle = movieTitle;
+    	this.genre = genre;
+    	this.duration = duration;
+    	this.ageRating = ageRating;
+    	this.status = status;
+    }
+    
+    //getter
+    public String getMovieID(){return movieID;}
+    public String getMovieTitle(){return movieTitle;}
+    public String getGenre(){return genre;}
+    public int getDuration(){return duration;}
+    public String getAgeRating(){return ageRating;}
+    public String getStatus(){return status;}
+    
+    
+    //setter
+    public void setMovieID(String movieID){this.movieID = movieID;}
+    public void setMovieTitle(String movieTitle){this.movieTitle = movieTitle;}
+    public void setGenre(String genre){this.genre =genre ;}
+    public void setDuration(int duration){this.duration = duration;}
+    public void setAgeRating(String ageRating){this.ageRating = ageRating;}
+    public void setStatus(String status){this.status = status;}
+    
+    
+    
+}
