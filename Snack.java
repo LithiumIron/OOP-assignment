@@ -1,53 +1,65 @@
-
+import java.util.ArrayList;
 public class Snack extends FoodOrder {
 	
-	private String[] snacks = {"Popcorn","Hotdog x2",
-								"French Fries","Chicken Meatball",
+	private String[] snack = {"Popcorn","Hotdog x2",
+								"French Fries","Sweet Corn",
 								"Nuggets"};
 	
-	private double[] snacksCost={11.00,10.00,
-								4.00,8.00,
+	private double[] snackCost={8.00,10.00,
+								4.00,4.00,
 								6.00};
 	
+	public Snack(){
+		this(0,0.0,new ArrayList<>(),0);
+	}
 
-    public Snack() {
-    	super();
-    	
+    public Snack(int orderNo, double totalPrice, ArrayList<String> order, int itemNo) {
+    	super(orderNo, totalPrice, order, itemNo);	
     }
     
-    //getter methods
-    public String getSnack(int x){
-    	if(x>=0&&x<snacks.length){
-    		addOrderNo();
-    		return snacks[x];
-    		
-    	}
-    	
-    	else{
-    		return null;
-    	}
-    		
-    } //getter snack end
-    	
-    public double getSnackCost(int x){
-    	if(x>=0&&x<snacksCost.length){
-    		return snacksCost[x];
-    	}
-    	
-    	else{
-    		return 0.0;
-    	}
-    	
-    }//getter cost end
+    //getter 
+    public String getSnackAndCost(){
+    	StringBuilder sb = new StringBuilder();
+    	for(int i=0; i<snack.length; i++){
+    		if(i==0 || i==4)
+    			sb.append(String.format("%d. %-15s RM%.2f\n", i + 1, snack[i], snackCost[i]));
+        	else
+            	sb.append(String.format("%d. %-15s RM%.2f\n", i + 1, snack[i], snackCost[i]));
 
-
+    	}//for end
+    	
+    	return sb.toString();
+    }
+    /* getter 
+    public String getSnackCost(){
+    	StringBuilder sb = new StringBuilder();
+    	for(int i=0; i<snackCost.length; i++){
+    		sb.append("RM"+snackCost[i]);
+    		if(i<snack.length-1){
+    			sb.append("\n");
+    		}//if end
+    	}//for end
+    	
+    	return sb.toString();
+    }*/
+    
 	//setter methods
-    public void setSnacks(String[] snacks) {
-        this.snacks = snacks;
-    }
+	public void setSnack(String[] snack) {
+		this.snack = snack;
+	}
+	public void setSnackCost(double[] snackCost) {
+		this.snackCost = snackCost;
+	}
 
-    public void setSnacksCost(double[] snacksCost) {
-        this.snacksCost = snacksCost;
-    }
+    //-------------------other methods-------------------
+    public void addSnack(int choice){
+    	if(choice>0 && choice<=snack.length){
+    		super.addItem(snack[choice-1],snackCost[choice-1]);
+    	}
+    }// method end
+   
     
+    public String toString(){
+    	return getSnackAndCost();
+    }
 }
