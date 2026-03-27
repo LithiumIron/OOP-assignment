@@ -7,7 +7,7 @@ public class FoodOrder {
     private int itemNo=0;    
     private double totalPrice=0.0;
     private ArrayList<String> order = new ArrayList<>();
-    
+    //constructor
     
     public FoodOrder(){
     	this(0,0.0,new ArrayList<>(),0);
