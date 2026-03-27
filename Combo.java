@@ -22,9 +22,9 @@ public class Combo extends FoodOrder {
     	StringBuilder sb = new StringBuilder();
     	for(int i=0; i<combo.length; i++){
     		if(i==0 || i==4)
-    			sb.append(String.format("%d. %-15s RM%.2f\n", i + 1, combo[i], comboCost[i]));
+    			sb.append(String.format("%d. %-25s RM%.2f\n", i + 1, combo[i], comboCost[i]));
         	else
-            	sb.append(String.format("%d. %-15s RM%.2f\n", i + 1, combo[i], comboCost[i]));
+            	sb.append(String.format("%d. %-25s RM%.2f\n", i + 1, combo[i], comboCost[i]));
 
     	}//for end
     	
