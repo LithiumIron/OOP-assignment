@@ -62,11 +62,7 @@ public class FoodOrder {
     }
 
     //------------other methods------------
-    //add order number
-    public void addOrderNo(){
-    	orderNo++;
-    }//add order number end
-    
+
     public void addItem(String item,double price){
     	order.add(item);
     	totalPrice +=price;
