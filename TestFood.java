@@ -1,4 +1,4 @@
-public class main {
+public class TestFood {
 
     public static void main(String[] args) {
         Snack s1= new Snack();
