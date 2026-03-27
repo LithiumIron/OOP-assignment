@@ -16,7 +16,7 @@ public class Combo extends FoodOrder {
     //getter methods
     public String getCombo(int x){
     	if(x>=0&&x<combo.length){
-    		addOrderNo();
+    		super.addOrderNo();
     		return combo[x];
     		
     	}
