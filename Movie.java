@@ -47,7 +47,7 @@ public class Movie {
                 movieId, title, genre, duration, ageRating, status);
     }
 
-    // ---------- FILE ----------
+    // ---------- FILE opretation ----------
     public static void loadFromFile() {
         File file = new File(FILE_NAME);
         if (!file.exists()) return;
@@ -78,7 +78,8 @@ public class Movie {
             System.out.println("Error saving movies.");
         }
     }
-
+    
+	// ------------ generate id ---------------
     private static String generateNextId() {
         int max = 0;
         for (Movie m : movieList) {
@@ -88,13 +89,14 @@ public class Movie {
         return String.format("M%03d", max + 1);
     }
 
-    // ---------- CRUD ----------
+    // add movie
     public static void addMovie(Movie m) {
         movieList.add(m);
         saveToFile();
         System.out.println("\nMovie added successfully!");
     }
 
+	// delete movie
     public static void deleteMovie(String id) {
         Movie m = findMovieById(id);
         if (m == null) {
@@ -106,6 +108,7 @@ public class Movie {
         System.out.println("Movie deleted successfully!");
     }
 
+	// find movie by id
     public static Movie findMovieById(String id) {
         for (Movie m : movieList) {
             if (m.movieId.equalsIgnoreCase(id)) return m;
@@ -123,6 +126,7 @@ public class Movie {
         return result;
     }
 
+	//update movie
     public static void updateMovie(String id, Scanner scanner) {
         Movie movie = findMovieById(id);
 
@@ -135,12 +139,12 @@ public class Movie {
 
         System.out.println("Current movie info:");
         System.out.println("---------------------------------");
-        System.out.printf("|ID     : %-10s|\n", movie.movieId);
-        System.out.printf("|Title  : %-10s|\n", movie.title);
-        System.out.printf("|Genre  : %-10s|\n", movie.genre);
-        System.out.printf("|Duration: %-9d|\n", movie.duration);
-        System.out.printf("|Rating : %-10d|\n", movie.ageRating);
-        System.out.printf("|Status : %-10s|\n", movie.status);
+        System.out.printf("|ID      : %-21s|\n", movie.movieId);
+        System.out.printf("|Title   : %-21s|\n", movie.title);
+        System.out.printf("|Genre   : %-21s|\n", movie.genre);
+        System.out.printf("|Duration: %-21d|\n", movie.duration);
+        System.out.printf("|Rating  : %-21d|\n", movie.ageRating);
+        System.out.printf("|Status  : %-21s|\n", movie.status);
         System.out.println("---------------------------------");
 
         System.out.println("\n--- Update Movie Status ---");
@@ -156,7 +160,7 @@ public class Movie {
         scanner.nextLine();
     }
 
-    // ---------- DISPLAY MENU ----------
+    // display movies menu
     public static void displayMoviesMenu(Scanner scanner) {
         while (true) {
 
@@ -177,7 +181,7 @@ public class Movie {
             System.out.println("0. Exit");
             System.out.print("Enter your choice (0-" + i + "): ");
 
-            int choice = getInt(scanner);
+            int choice = getIntRange(scanner,0,i);
 
             if (choice == 0) return;
 
@@ -187,13 +191,10 @@ public class Movie {
             if (choice == i) {
                 list = new ArrayList<>(movieList);
                 title = "All Movies";
-            } else if (choice >= 1 && choice <= genres.size()) {
+            } else {
                 String g = genres.get(choice - 1);
                 list = filterByGenre(g);
                 title = g + " Movies";
-            } else {
-                System.out.println("Invalid choice.");
-                continue;
             }
 
             clearScreenLarge();
@@ -202,9 +203,11 @@ public class Movie {
 
             System.out.print("Press Enter to return...");
             scanner.nextLine();
+            clearScreenLarge();
         }
     }
 
+	// filter by genre
     private static List<Movie> filterByGenre(String g) {
         List<Movie> r = new ArrayList<>();
         for (Movie m : movieList)
