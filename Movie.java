@@ -1,19 +1,12 @@
-import java.io.*;
-import java.util.*;
+import java.io.*;//import classess for file io
+import java.util.*;//import utility classes such as List, ArrayList and Scanner
 
-/**
- * Movie class represents a movie entity.
- * Manages movie data and provides CRUD operations with file persistence.
- * 
- * ID Generation: uses a persistent counter (movie_counter.txt) to ensure 
- * unique IDs even after movies are deleted.
- */
 public class Movie {
-    // ==================== CONSTANTS & STATIC FIELDS ====================
-    private static final String FILE_NAME = "movies.txt";
-    private static final String COUNTER_FILE = "movie_counter.txt";
+    
+    private static final String FILE_NAME = "movies.txt";//name of the file used to store movie data
+    private static final String COUNTER_FILE = "movie_counter.txt";//file that stores the next available movie ID number
     private static List<Movie> movieList = new ArrayList<>();
-    private static int nextIdNumber = 1;   // next available ID number (M001 -> 1)
+    private static int nextIdNumber = 1;   // next available ID number (1 -> M001)
 
     public static final String[] VALID_GENRES = {
         "Action", "Adventure", "Animation", "Comedy", "Drama",
@@ -25,7 +18,7 @@ public class Movie {
         "Now Showing", "Coming Soon", "Ended"
     };
 
-    // ==================== INSTANCE FIELDS ====================
+    //data properties
     private String movieId;
     private String title;
     private String genre;
@@ -33,7 +26,7 @@ public class Movie {
     private int ageRating;
     private String status;
 
-    // ==================== CONSTRUCTORS ====================
+    //full args cons used when loading movie data from file
     public Movie(String movieId, String title, String genre, int duration, int ageRating, String status) {
         this.movieId = movieId;
         this.title = title;
@@ -42,52 +35,49 @@ public class Movie {
         this.ageRating = ageRating;
         this.status = status;
     }
-
+    
+    //cons used when creating a new movie
+    //movie id is automatically generated
     public Movie(String title, String genre, int duration, int ageRating, String status) {
         this.title = title;
         this.genre = genre;
         this.duration = duration;
         this.ageRating = ageRating;
         this.status = status;
-        this.movieId = generateNextId();   // use persistent counter
+        this.movieId = generateNextId();
     }
 
-    // ==================== GETTERS ====================
-    public String getMovieId()   { return movieId; }
-    public String getTitle()     { return title; }
-    public String getGenre()     { return genre; }
-    public int getDuration()     { return duration; }
-    public int getAgeRating()    { return ageRating; }
-    public String getStatus()    { return status; }
+    //getter
+    public String getMovieId(){return movieId;}
+    public String getTitle(){return title;}
+    public String getGenre(){return genre;}
+    public int getDuration(){return duration;}
+    public int getAgeRating(){return ageRating;}
+    public String getStatus(){return status;}
 
-    // ==================== SETTERS ====================
-    public void setTitle(String title)          { this.title = title; }
-    public void setGenre(String genre)          { this.genre = genre; }
-    public void setDuration(int duration)       { this.duration = duration; }
-    public void setAgeRating(int ageRating)     { this.ageRating = ageRating; }
-    public void setStatus(String status)        { this.status = status; }
+    //setter
+    public void setTitle(String title){this.title = title;}
+    public void setGenre(String genre){this.genre = genre;}
+    public void setDuration(int duration){this.duration = duration;}
+    public void setAgeRating(int ageRating){this.ageRating = ageRating;}
+    public void setStatus(String status){this.status = status;}
 
-    // ==================== STRING REPRESENTATION ====================
+    //to string
     public String toString() {
         return String.format("ID: %-6s | Title: %-20s | Genre: %-12s | Duration: %3d | Rating: %2d | Status: %-12s",
                 getMovieId(), getTitle(), getGenre(), getDuration(), getAgeRating(), getStatus());
     }
 
-    // ==================== ID GENERATION (persistent counter) ====================
-    /**
-     * Generates next movie ID using a persistent counter that never decreases.
-     * Format: M001, M002, ...
-     */
+    //auto-generated new movie id
     private static String generateNextId() {
-        String id = String.format("M%03d", nextIdNumber);
-        nextIdNumber++;          // increment for next movie
-        saveCounter();           // immediately save the new counter value
+        String id = String.format("M%03d", nextIdNumber);//M001,M002,M003
+        nextIdNumber++;
+        saveCounter();
+        //this method generates a unique movei ID using a counter and 
+        //saves the updated counter value to ensure IDs remain unique
         return id;
     }
 
-    /**
-     * Saves the current counter value to a separate file.
-     */
     private static void saveCounter() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(COUNTER_FILE))) {
             bw.write(String.valueOf(nextIdNumber));
@@ -96,17 +86,14 @@ public class Movie {
         }
     }
 
-    /**
-     * Loads the counter from file. If file doesn't exist, initializes counter
-     * based on the maximum ID found in the movie list (for backward compatibility).
-     */
+    //load movie id counter from file
     private static void loadCounter() {
         File counterFile = new File(COUNTER_FILE);
         if (counterFile.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(counterFile))) {
-                String line = br.readLine();
-                if (line != null && !line.trim().isEmpty()) {
-                    nextIdNumber = Integer.parseInt(line.trim());
+                String line = br.readLine();//read 1st line from the file
+                if (line != null && !line.trim().isEmpty()) {//"","    " -> empty
+                    nextIdNumber = Integer.parseInt(line.trim());//trim(): remove spaces at the beginning and end of a string
                     return;
                 }
             } catch (Exception e) {
@@ -114,26 +101,27 @@ public class Movie {
             }
         }
 
-        // If counter file doesn't exist, calculate from existing movies
+        //if counter file doesn't exist, calculate from existing movies
         int max = 0;
         for (Movie m : movieList) {
+            //extract the numeric part of the movie id
+            //example: M005 -> 005
             int num = Integer.parseInt(m.getMovieId().substring(1));
             if (num > max) max = num;
         }
         nextIdNumber = max + 1;
-        saveCounter();   // create the counter file for future runs
+        saveCounter();
     }
 
-    // ==================== FILE OPERATIONS ====================
-    public static void loadFromFile() {
-        // First load movies
-        File file = new File(FILE_NAME);
+    //file operations
+    public static void loadFromFile() {//load movie data from file
+        File file = new File(FILE_NAME);//create a object for the movie file
         if (file.exists()) {
-            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {//open file and read its content
                 String line;
-                while ((line = br.readLine()) != null) {
-                    String[] parts = line.split("\\|");
-                    if (parts.length == 6) {
+                while ((line = br.readLine()) != null) {//read each line from the file
+                    String[] parts = line.split("\\|");//split the line into parts using "|" as delimeter
+                    if (parts.length == 6) {//ensure the line contains the correct number of fields
                         movieList.add(new Movie(parts[0], parts[1], parts[2],
                                 Integer.parseInt(parts[3]),
                                 Integer.parseInt(parts[4]), parts[5]));
@@ -144,7 +132,7 @@ public class Movie {
             }
         }
 
-        // Then load/initialize counter (depends on movieList)
+        //load or initializen the movie id counter
         loadCounter();
     }
 
