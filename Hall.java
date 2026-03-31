@@ -1,16 +1,27 @@
 import java.io.*;
 import java.util.*;
 
+/**
+ * Hall class represents a cinema hall.
+ * Manages hall data (ID, type) and provides CRUD operations with file persistence.
+ * 
+ * ID Generation: uses a persistent counter (hall_counter.txt) to ensure 
+ * unique IDs even after halls are deleted.
+ */
 public class Hall {
+    // ==================== CONSTANTS & STATIC FIELDS ====================
     private static final String FILE_NAME = "halls.txt";
+    private static final String COUNTER_FILE = "hall_counter.txt";
     private static List<Hall> hallList = new ArrayList<>();
-    private static int idCounter = 1;
+    private static int nextIdNumber = 1;   // next available ID number (H001 -> 1)
 
+    // ==================== INSTANCE FIELDS ====================
     private String hallId;
     private String type; // Small / Medium / Large
 
-    public Hall(String id, String type) {
-        this.hallId = id;
+    // ==================== CONSTRUCTORS ====================
+    public Hall(String hallId, String type) {
+        this.hallId = hallId;
         this.type = type;
     }
 
@@ -19,50 +30,105 @@ public class Hall {
         this.type = type;
     }
 
+    // ==================== GETTERS ====================
     public String getHallId() { return hallId; }
-    public String getType() { return type; }
+    public String getType()   { return type; }
 
-    // ---------- ID ----------
-    private static String generateNextId() {
-        return String.format("H%03d", idCounter++);
+    // ==================== SETTERS ====================
+    public void setType(String type) { this.type = type; }
+
+    // ==================== STRING REPRESENTATION ====================
+    public String toString() {
+        return "ID: " + getHallId() + " | Type: " + getType();
     }
 
-    // ---------- FILE ----------
-    public static void loadFromFile() {
-        File file = new File(FILE_NAME);
-        if (!file.exists()) return;
+    // ==================== ID GENERATION (persistent counter) ====================
+    /**
+     * Generates next hall ID using a persistent counter that never decreases.
+     * Format: H001, H002, ...
+     */
+    private static String generateNextId() {
+        String id = String.format("H%03d", nextIdNumber);
+        nextIdNumber++;          // increment for next hall
+        saveCounter();           // immediately save the new counter value
+        return id;
+    }
 
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            int maxId = 0;
-
-            while ((line = br.readLine()) != null) {
-                String[] p = line.split("\\|");
-                if (p.length == 2) {
-                    hallList.add(new Hall(p[0], p[1]));
-
-                    int num = Integer.parseInt(p[0].substring(1));
-                    if (num > maxId) maxId = num;
-                }
-            }
-            idCounter = maxId + 1;
-        } catch (Exception e) {
-            System.out.println("Error loading halls.");
+    /**
+     * Saves the current counter value to a separate file.
+     */
+    private static void saveCounter() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(COUNTER_FILE))) {
+            bw.write(String.valueOf(nextIdNumber));
+        } catch (IOException e) {
+            System.out.println("Error saving hall counter.");
         }
+    }
+
+    /**
+     * Loads the counter from file. If file doesn't exist, initializes counter
+     * based on the maximum ID found in the hall list (for backward compatibility).
+     */
+    private static void loadCounter() {
+        File counterFile = new File(COUNTER_FILE);
+        if (counterFile.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(counterFile))) {
+                String line = br.readLine();
+                if (line != null && !line.trim().isEmpty()) {
+                    nextIdNumber = Integer.parseInt(line.trim());
+                    return;
+                }
+            } catch (Exception e) {
+                System.out.println("Error loading hall counter.");
+            }
+        }
+
+        // If counter file doesn't exist, calculate from existing halls
+        int max = 0;
+        for (Hall h : hallList) {
+            int num = Integer.parseInt(h.getHallId().substring(1));
+            if (num > max) max = num;
+        }
+        nextIdNumber = max + 1;
+        saveCounter();   // create the counter file for future runs
+    }
+
+    // ==================== FILE OPERATIONS ====================
+    public static void loadFromFile() {
+        // First load halls
+        File file = new File(FILE_NAME);
+        if (file.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] parts = line.split("\\|");
+                    if (parts.length == 2) {
+                        hallList.add(new Hall(parts[0], parts[1]));
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("Error loading halls.");
+            }
+        }
+
+        // Then load/initialize counter (depends on hallList)
+        loadCounter();
     }
 
     private static void saveToFile() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME))) {
             for (Hall h : hallList) {
-                bw.write(h.hallId + "|" + h.type);
+                bw.write(h.getHallId() + "|" + h.getType());
                 bw.newLine();
             }
         } catch (Exception e) {
             System.out.println("Error saving halls.");
         }
+        // counter is saved in generateNextId, but we also save it here for safety
+        saveCounter();
     }
 
-    // ---------- ADD ----------
+    // ==================== CRUD OPERATIONS ====================
     public static void addHallByType(int typeChoice) {
         String type = switch (typeChoice) {
             case 1 -> "Small";
@@ -80,32 +146,13 @@ public class Hall {
         System.out.println("Type: " + h.getType());
     }
 
-    // ---------- SUMMARY ----------
-    public static void displayHallSummary() {
-        int small = 0, medium = 0, large = 0;
-
+    private static Hall findHallById(String id) {
         for (Hall h : hallList) {
-            switch (h.type) {
-                case "Small" -> small++;
-                case "Medium" -> medium++;
-                case "Large" -> large++;
-            }
+            if (h.getHallId().equalsIgnoreCase(id)) return h;
         }
-
-        System.out.println("\n========= HALL SUMMARY =========");
-        System.out.println("Small Hall  : " + small);
-        System.out.println("Medium Hall : " + medium);
-        System.out.println("Large Hall  : " + large);
-        System.out.println("-------------------------------");
-        System.out.println("Total Number of Halls: " + hallList.size());
-        System.out.println("================================");
-
-        
-        System.out.print("\nPress Enter to continue...");
-        new Scanner(System.in).nextLine();
+        return null;
     }
 
-    // ---------- DELETE ----------
     public static void deleteHallPrompt(Scanner scanner) {
         displayAllHalls();
 
@@ -127,28 +174,65 @@ public class Hall {
             hallList.remove(h);
             saveToFile();
             System.out.println("Hall deleted successfully!");
+            // Counter is NOT decreased, so IDs remain unique forever.
         } else {
             System.out.println("Deletion cancelled.");
         }
     }
 
-    private static Hall findHallById(String id) {
+    // ==================== DISPLAY METHODS ====================
+    public static void displayHallSummary() {
+        int small = 0, medium = 0, large = 0;
+
         for (Hall h : hallList) {
-            if (h.hallId.equalsIgnoreCase(id)) return h;
+            switch (h.getType()) {
+                case "Small" -> small++;
+                case "Medium" -> medium++;
+                case "Large" -> large++;
+            }
         }
-        return null;
+
+        System.out.println("\n========= HALL SUMMARY =========");
+        System.out.println("Small Hall  : " + small);
+        System.out.println("Medium Hall : " + medium);
+        System.out.println("Large Hall  : " + large);
+        System.out.println("-------------------------------");
+        System.out.println("Total Number of Halls: " + hallList.size());
+        System.out.println("================================");
+
+        System.out.print("\nPress Enter to continue...");
+        new Scanner(System.in).nextLine();
     }
 
-    // ---------- LIST ----------
     private static void displayAllHalls() {
         System.out.println("\n===== ALL HALLS =====");
         for (Hall h : hallList) {
-            System.out.println("ID: " + h.hallId + " | Type: " + h.type);
+            System.out.println("ID: " + h.getHallId() + " | Type: " + h.getType());
         }
         System.out.println("=====================\n");
     }
 
-    // ---------- SEAT MAP ----------
+    public static void displayAllHallsDetailed(Scanner scanner) {
+        clearScreen();
+
+        System.out.println("------------------------------------------");
+        System.out.println("|             HALL DETAILS               |");
+        System.out.println("----------------------+-------------------");
+        System.out.println("|       Hall ID       |       Type       |");
+        System.out.println("----------------------+-------------------");
+
+        for (Hall h : hallList) {
+            System.out.printf("|        %-5s        |      %-7s     |\n", h.getHallId(), h.getType());
+            System.out.println("|---------------------+------------------|");
+        }
+
+        System.out.println("\nTotal halls: " + hallList.size());
+
+        System.out.print("\nPress Enter to continue...");
+        scanner.nextLine();
+    }
+
+    // ==================== SEAT MAP DISPLAY ====================
     public static void displaySeatMapMenu(Scanner scanner) {
         while (true) {
             clearScreen();
@@ -160,7 +244,7 @@ public class Hall {
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
 
-            int c = getIntRange(scanner,0,3);
+            int c = getIntRange(scanner, 0, 3);
 
             if (c == 0) return;
 
@@ -176,7 +260,6 @@ public class Hall {
         }
     }
 
-    // ---------- ASCII MAPS ----------
     private static void printSmallHall() {
         System.out.println("        Small Hall");
         System.out.println("      ---------------");
@@ -226,30 +309,11 @@ public class Hall {
         System.out.println("   1 2 3  4 5 6 7 8 9 a b  c d");
         System.out.println("\nHall Capacity: 143 seats");
     }
-    
-    //display all halls detailed
-    public static void displayAllHallsDetailed(Scanner scanner){
-    	clearScreen();
-    	
-    	System.out.println("------------------------------------------\n|             HALL DETAILS               |\n----------------------+-------------------");
- 		System.out.println("|       Hall ID       |       Type       |\n----------------------+-------------------");
- 
-    	for (Hall h : hallList) {
-        	System.out.printf("|        %-5s        |      %-7s     |", h.hallId,h.type);
-        	System.out.println("\n|---------------------+------------------|");
-    	}
 
-    	System.out.println("\nTotal halls: " + hallList.size());
-
-    	System.out.print("\nPress Enter to continue...");
-    	scanner.nextLine();
-    	
-    }
-
-    // ---------- UTILS ----------
+    // ==================== UTILITY METHODS ====================
     private static void pause() {
         System.out.print("\nPress Enter to continue...");
-        new Scanner(System.in).nextLine(); 
+        new Scanner(System.in).nextLine();
     }
 
     private static void clearScreen() {
@@ -265,7 +329,7 @@ public class Hall {
         sc.nextLine();
         return v;
     }
-    
+
     private static int getIntRange(Scanner sc, int min, int max) {
         while (true) {
             int v = getInt(sc);
@@ -273,5 +337,4 @@ public class Hall {
             System.out.printf("Please enter a number between %d and %d: ", min, max);
         }
     }
-    
 }
