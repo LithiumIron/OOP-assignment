@@ -1,9 +1,12 @@
-import java.io.*;
-import java.util.*;
+import java.io.*;//import classes for file io
+import java.util.*;//import utility classes like List, ArrayList, Scanner
 
 public class Movie {
-    private static final String FILE_NAME = "movies.txt";
+    //file operations
+    private static final String FILE_NAME = "movies.txt";//file name used to store movie data
+    private static final String COUNTER_FILE = "movie_counter.txt";
     private static List<Movie> movieList = new ArrayList<>();
+    private static int nextIdNumber = 1;   // next available ID number (M001 -> 1)
 
     public static final String[] VALID_GENRES = {
         "Action", "Adventure", "Animation", "Comedy", "Drama",
@@ -15,6 +18,7 @@ public class Movie {
         "Now Showing", "Coming Soon", "Ended"
     };
 
+    // ==================== INSTANCE FIELDS ====================
     private String movieId;
     private String title;
     private String genre;
@@ -22,7 +26,7 @@ public class Movie {
     private int ageRating;
     private String status;
 
-    // ---------- CONSTRUCTOR ----------
+    // ==================== CONSTRUCTORS ====================
     public Movie(String movieId, String title, String genre, int duration, int ageRating, String status) {
         this.movieId = movieId;
         this.title = title;
@@ -38,65 +42,126 @@ public class Movie {
         this.duration = duration;
         this.ageRating = ageRating;
         this.status = status;
-        this.movieId = generateNextId();
+        this.movieId = generateNextId();   // use persistent counter
     }
 
-    @Override
+    // ==================== GETTERS ====================
+    public String getMovieId()   { return movieId; }
+    public String getTitle()     { return title; }
+    public String getGenre()     { return genre; }
+    public int getDuration()     { return duration; }
+    public int getAgeRating()    { return ageRating; }
+    public String getStatus()    { return status; }
+
+    // ==================== SETTERS ====================
+    public void setTitle(String title)          { this.title = title; }
+    public void setGenre(String genre)          { this.genre = genre; }
+    public void setDuration(int duration)       { this.duration = duration; }
+    public void setAgeRating(int ageRating)     { this.ageRating = ageRating; }
+    public void setStatus(String status)        { this.status = status; }
+
+    // ==================== STRING REPRESENTATION ====================
     public String toString() {
         return String.format("ID: %-6s | Title: %-20s | Genre: %-12s | Duration: %3d | Rating: %2d | Status: %-12s",
-                movieId, title, genre, duration, ageRating, status);
+                getMovieId(), getTitle(), getGenre(), getDuration(), getAgeRating(), getStatus());
     }
 
-    // ---------- FILE opretation ----------
-    public static void loadFromFile() {
-        File file = new File(FILE_NAME);
-        if (!file.exists()) return;
+    // ==================== ID GENERATION (persistent counter) ====================
+    /**
+     * Generates next movie ID using a persistent counter that never decreases.
+     * Format: M001, M002, ...
+     */
+    private static String generateNextId() {
+        String id = String.format("M%03d", nextIdNumber);
+        nextIdNumber++;          // increment for next movie
+        saveCounter();           // immediately save the new counter value
+        return id;
+    }
 
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] p = line.split("\\|");
-                if (p.length == 6) {
-                    movieList.add(new Movie(p[0], p[1], p[2],
-                            Integer.parseInt(p[3]),
-                            Integer.parseInt(p[4]), p[5]));
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Error loading movies.");
+    /**
+     * Saves the current counter value to a separate file.
+     */
+    private static void saveCounter() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(COUNTER_FILE))) {
+            bw.write(String.valueOf(nextIdNumber));
+        } catch (IOException e) {
+            System.out.println("Error saving movie counter.");
         }
+    }
+
+    /**
+     * Loads the counter from file. If file doesn't exist, initializes counter
+     * based on the maximum ID found in the movie list (for backward compatibility).
+     */
+    private static void loadCounter() {
+        File counterFile = new File(COUNTER_FILE);
+        if (counterFile.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(counterFile))) {
+                String line = br.readLine();
+                if (line != null && !line.trim().isEmpty()) {
+                    nextIdNumber = Integer.parseInt(line.trim());
+                    return;
+                }
+            } catch (Exception e) {
+                System.out.println("Error loading movie counter.");
+            }
+        }
+
+        // If counter file doesn't exist, calculate from existing movies
+        int max = 0;
+        for (Movie m : movieList) {
+            int num = Integer.parseInt(m.getMovieId().substring(1));
+            if (num > max) max = num;
+        }
+        nextIdNumber = max + 1;
+        saveCounter();   // create the counter file for future runs
+    }
+
+    // ==================== FILE OPERATIONS ====================
+    public static void loadFromFile() {
+        // First load movies
+        File file = new File(FILE_NAME);
+        if (file.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] parts = line.split("\\|");
+                    if (parts.length == 6) {
+                        movieList.add(new Movie(parts[0], parts[1], parts[2],
+                                Integer.parseInt(parts[3]),
+                                Integer.parseInt(parts[4]), parts[5]));
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("Error loading movies.");
+            }
+        }
+
+        // Then load/initialize counter (depends on movieList)
+        loadCounter();
     }
 
     private static void saveToFile() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME))) {
             for (Movie m : movieList) {
-                bw.write(m.movieId + "|" + m.title + "|" + m.genre + "|" +
-                        m.duration + "|" + m.ageRating + "|" + m.status);
+                bw.write(m.getMovieId() + "|" + m.getTitle() + "|" + m.getGenre() + "|" +
+                        m.getDuration() + "|" + m.getAgeRating() + "|" + m.getStatus());
                 bw.newLine();
             }
         } catch (Exception e) {
             System.out.println("Error saving movies.");
         }
-    }
-    
-	// ------------ generate id ---------------
-    private static String generateNextId() {
-        int max = 0;
-        for (Movie m : movieList) {
-            int num = Integer.parseInt(m.movieId.substring(1));
-            if (num > max) max = num;
-        }
-        return String.format("M%03d", max + 1);
+        // counter is saved in generateNextId, but we also save it here for safety
+        saveCounter();
     }
 
-    // add movie
+    // ==================== CRUD OPERATIONS ====================
     public static void addMovie(Movie m) {
         movieList.add(m);
         saveToFile();
         System.out.println("\nMovie added successfully!");
     }
 
-	// delete movie
     public static void deleteMovie(String id) {
         Movie m = findMovieById(id);
         if (m == null) {
@@ -106,12 +171,12 @@ public class Movie {
         movieList.remove(m);
         saveToFile();
         System.out.println("Movie deleted successfully!");
+        // Counter is NOT decreased, so IDs remain unique forever.
     }
 
-	// find movie by id
     public static Movie findMovieById(String id) {
         for (Movie m : movieList) {
-            if (m.movieId.equalsIgnoreCase(id)) return m;
+            if (m.getMovieId().equalsIgnoreCase(id)) return m;
         }
         return null;
     }
@@ -119,17 +184,15 @@ public class Movie {
     public static List<Movie> findMoviesByTitle(String keyword) {
         List<Movie> result = new ArrayList<>();
         for (Movie m : movieList) {
-            if (m.title.toLowerCase().contains(keyword.toLowerCase())) {
+            if (m.getTitle().toLowerCase().contains(keyword.toLowerCase())) {
                 result.add(m);
             }
         }
         return result;
     }
 
-	//update movie
     public static void updateMovie(String id, Scanner scanner) {
         Movie movie = findMovieById(id);
-
         if (movie == null) {
             System.out.println("Movie ID not found!");
             return;
@@ -139,34 +202,36 @@ public class Movie {
 
         System.out.println("Current movie info:");
         System.out.println("---------------------------------");
-        System.out.printf("|ID      : %-21s|\n", movie.movieId);
-        System.out.printf("|Title   : %-21s|\n", movie.title);
-        System.out.printf("|Genre   : %-21s|\n", movie.genre);
-        System.out.printf("|Duration: %-21d|\n", movie.duration);
-        System.out.printf("|Rating  : %-21d|\n", movie.ageRating);
-        System.out.printf("|Status  : %-21s|\n", movie.status);
+        System.out.printf("|ID      : %-21s|\n", movie.getMovieId());
+        System.out.printf("|Title   : %-21s|\n", movie.getTitle());
+        System.out.printf("|Genre   : %-21s|\n", movie.getGenre());
+        System.out.printf("|Duration: %-21d|\n", movie.getDuration());
+        System.out.printf("|Rating  : %-21d|\n", movie.getAgeRating());
+        System.out.printf("|Status  : %-21s|\n", movie.getStatus());
         System.out.println("---------------------------------");
 
         System.out.println("\n--- Update Movie Status ---");
         String newStatus = selectStatus(scanner);
 
-        movie.status = newStatus;
+        movie.setStatus(newStatus);
         saveToFile();
 
         System.out.println("\nMovie status updated successfully!");
-        System.out.println(movie);
+        System.out.println(movie.toString());
 
         System.out.print("\nPress Enter to return...");
         scanner.nextLine();
     }
 
-    // display movies menu
+    // ==================== DISPLAY METHODS ====================
+    public static void displayAllMovies() {
+        printTable(movieList, "All Movies");
+    }
+
     public static void displayMoviesMenu(Scanner scanner) {
         while (true) {
-
-
             Set<String> set = new TreeSet<>();
-            for (Movie m : movieList) set.add(m.genre);
+            for (Movie m : movieList) set.add(m.getGenre());
             List<String> genres = new ArrayList<>(set);
 
             System.out.println("========================================");
@@ -181,7 +246,7 @@ public class Movie {
             System.out.println("0. Exit");
             System.out.print("Enter your choice (0-" + i + "): ");
 
-            int choice = getIntRange(scanner,0,i);
+            int choice = getIntRange(scanner, 0, i);
 
             if (choice == 0) return;
 
@@ -198,7 +263,6 @@ public class Movie {
             }
 
             clearScreenLarge();
-
             printTable(list, title);
 
             System.out.print("Press Enter to return...");
@@ -207,12 +271,32 @@ public class Movie {
         }
     }
 
-	// filter by genre
-    private static List<Movie> filterByGenre(String g) {
-        List<Movie> r = new ArrayList<>();
-        for (Movie m : movieList)
-            if (m.genre.equalsIgnoreCase(g)) r.add(m);
-        return r;
+    public static void displayMovieSummary() {
+        Map<String, Integer> map = new TreeMap<>();
+
+        for (Movie m : movieList) {
+            map.put(m.getGenre(), map.getOrDefault(m.getGenre(), 0) + 1);
+        }
+
+        System.out.println("================== MOVIE SUMMARY ==================");
+        System.out.printf("%-15s | %-6s%n", "Genre", "Count");
+        System.out.println("-----------------+--------");
+
+        for (String g : map.keySet()) {
+            System.out.printf("%-15s | %-6d%n", g, map.get(g));
+        }
+
+        System.out.println("===================================================");
+        System.out.println("\nTotal number of movies: " + movieList.size());
+    }
+
+    // ==================== HELPER METHODS ====================
+    private static List<Movie> filterByGenre(String genre) {
+        List<Movie> result = new ArrayList<>();
+        for (Movie m : movieList) {
+            if (m.getGenre().equalsIgnoreCase(genre)) result.add(m);
+        }
+        return result;
     }
 
     private static void printTable(List<Movie> list, String title) {
@@ -231,39 +315,19 @@ public class Movie {
 
         for (Movie m : list) {
             System.out.printf("%-6s | %-20s | %-12s | %-8d | %-6d | %-12s%n",
-                    m.movieId,
-                    truncate(m.title, 20),
-                    m.genre,
-                    m.duration,
-                    m.ageRating,
-                    m.status);
+                    m.getMovieId(),
+                    truncate(m.getTitle(), 20),
+                    m.getGenre(),
+                    m.getDuration(),
+                    m.getAgeRating(),
+                    m.getStatus());
         }
 
         System.out.println("====================================================================================");
         System.out.println("\nTotal number of " + title.toLowerCase() + ": " + list.size());
     }
 
-    // ---------- SUMMARY ----------
-    public static void displayMovieSummary() {
-        Map<String, Integer> map = new TreeMap<>();
-
-        for (Movie m : movieList) {
-            map.put(m.genre, map.getOrDefault(m.genre, 0) + 1);
-        }
-
-        System.out.println("================== MOVIE SUMMARY ==================");
-        System.out.printf("%-15s | %-6s%n", "Genre", "Count");
-        System.out.println("-----------------+--------");
-
-        for (String g : map.keySet()) {
-            System.out.printf("%-15s | %-6d%n", g, map.get(g));
-        }
-
-        System.out.println("===================================================");
-        System.out.println("\nTotal number of movies: " + movieList.size());
-    }
-
-    // ---------- INPUT ----------
+    // ==================== USER INPUT METHODS ====================
     public static String selectGenre(Scanner scanner) {
         System.out.println("\n--- Select Genre ---");
         for (int i = 0; i < VALID_GENRES.length; i++) {
@@ -284,7 +348,7 @@ public class Movie {
         return VALID_STATUSES[c - 1];
     }
 
-    // ---------- UTILS ----------
+    // ==================== UTILITY METHODS ====================
     private static int getInt(Scanner sc) {
         while (!sc.hasNextInt()) {
             System.out.print("Please enter a number: ");
@@ -314,9 +378,5 @@ public class Movie {
     private static String truncate(String s, int len) {
         if (s.length() <= len) return s;
         return s.substring(0, len - 3) + "...";
-    }
-
-    public static void displayAllMovies() {
-        printTable(movieList, "All Movies");
     }
 }
