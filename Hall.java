@@ -115,6 +115,8 @@ public class Hall {
         Hall h = findHallById(id);
         if (h == null) {
             System.out.println("Hall ID not found!");
+            System.out.print("\nPress ENTER to continue...");
+            scanner.nextLine();
             return;
         }
 
@@ -158,7 +160,7 @@ public class Hall {
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
 
-            int c = getInt(scanner);
+            int c = getIntRange(scanner,0,3);
 
             if (c == 0) return;
 
@@ -168,7 +170,6 @@ public class Hall {
                 case 1 -> printSmallHall();
                 case 2 -> printMediumHall();
                 case 3 -> printLargeHall();
-                default -> System.out.println("Invalid choice.");
             }
 
             pause();
@@ -225,6 +226,25 @@ public class Hall {
         System.out.println("   1 2 3  4 5 6 7 8 9 a b  c d");
         System.out.println("\nHall Capacity: 143 seats");
     }
+    
+    //display all halls detailed
+    public static void displayAllHallsDetailed(Scanner scanner){
+    	clearScreen();
+    	
+    	System.out.println("------------------------------------------\n|             HALL DETAILS               |\n----------------------+-------------------");
+ 		System.out.println("|       Hall ID       |       Type       |\n----------------------+-------------------");
+ 
+    	for (Hall h : hallList) {
+        	System.out.printf("|        %-5s        |      %-7s     |", h.hallId,h.type);
+        	System.out.println("\n|---------------------+------------------|");
+    	}
+
+    	System.out.println("\nTotal halls: " + hallList.size());
+
+    	System.out.print("\nPress Enter to continue...");
+    	scanner.nextLine();
+    	
+    }
 
     // ---------- UTILS ----------
     private static void pause() {
@@ -245,4 +265,13 @@ public class Hall {
         sc.nextLine();
         return v;
     }
+    
+    private static int getIntRange(Scanner sc, int min, int max) {
+        while (true) {
+            int v = getInt(sc);
+            if (v >= min && v <= max) return v;
+            System.out.printf("Please enter a number between %d and %d: ", min, max);
+        }
+    }
+    
 }
