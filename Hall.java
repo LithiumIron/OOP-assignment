@@ -20,6 +20,9 @@ public class Hall {
     private String type; // Small / Medium / Large
 
     // ==================== CONSTRUCTORS ====================
+    public Hall() {
+        this("");
+    }
     public Hall(String hallId, String type) {
         this.hallId = hallId;
         this.type = type;
@@ -162,8 +165,7 @@ public class Hall {
         Hall h = findHallById(id);
         if (h == null) {
             System.out.println("Hall ID not found!");
-            System.out.print("\nPress ENTER to continue...");
-            scanner.nextLine();
+            Utils.pause();
             return;
         }
 
@@ -200,8 +202,7 @@ public class Hall {
         System.out.println("Total Number of Halls: " + hallList.size());
         System.out.println("================================");
 
-        System.out.print("\nPress Enter to continue...");
-        new Scanner(System.in).nextLine();
+        Utils.pause();
     }
 
     private static void displayAllHalls() {
@@ -213,7 +214,7 @@ public class Hall {
     }
 
     public static void displayAllHallsDetailed(Scanner scanner) {
-        clearScreen();
+        Utils.clearScreen(80);
 
         System.out.println("------------------------------------------");
         System.out.println("|             HALL DETAILS               |");
@@ -228,14 +229,13 @@ public class Hall {
 
         System.out.println("\nTotal halls: " + hallList.size());
 
-        System.out.print("\nPress Enter to continue...");
-        scanner.nextLine();
+        Utils.pause();
     }
 
     // ==================== SEAT MAP DISPLAY ====================
     public static void displaySeatMapMenu(Scanner scanner) {
         while (true) {
-            clearScreen();
+            Utils.clearScreen(80);
 
             System.out.println("======= VIEW HALL SEAT MAP =======");
             System.out.println("1. Small Hall");
@@ -244,11 +244,11 @@ public class Hall {
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
 
-            int c = getIntRange(scanner, 0, 3);
+            int c = Utils.getIntRange(scanner, 0, 3);
 
             if (c == 0) return;
 
-            clearScreen();
+            Utils.clearScreen(80);
 
             switch (c) {
                 case 1 -> printSmallHall();
@@ -256,7 +256,7 @@ public class Hall {
                 case 3 -> printLargeHall();
             }
 
-            pause();
+            Utils.pause();
         }
     }
 
@@ -310,31 +310,5 @@ public class Hall {
         System.out.println("\nHall Capacity: 143 seats");
     }
 
-    // ==================== UTILITY METHODS ====================
-    private static void pause() {
-        System.out.print("\nPress Enter to continue...");
-        new Scanner(System.in).nextLine();
-    }
-
-    private static void clearScreen() {
-        for (int i = 0; i < 30; i++) System.out.println();
-    }
-
-    private static int getInt(Scanner sc) {
-        while (!sc.hasNextInt()) {
-            System.out.print("Please enter a number: ");
-            sc.next();
-        }
-        int v = sc.nextInt();
-        sc.nextLine();
-        return v;
-    }
-
-    private static int getIntRange(Scanner sc, int min, int max) {
-        while (true) {
-            int v = getInt(sc);
-            if (v >= min && v <= max) return v;
-            System.out.printf("Please enter a number between %d and %d: ", min, max);
-        }
-    }
+    
 }
