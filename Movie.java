@@ -26,6 +26,11 @@ public class Movie {
     private int ageRating;
     private String status;
 
+    //no arg cons
+    public Movie(){
+        this("","",0,0,"");
+    }
+
     //full args cons used when loading movie data from file
     public Movie(String movieId, String title, String genre, int duration, int ageRating, String status) {
         this.movieId = movieId;
@@ -136,21 +141,21 @@ public class Movie {
         loadCounter();
     }
 
+    //save all movies into file (overwrite)
     private static void saveToFile() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME))) {
             for (Movie m : movieList) {
                 bw.write(m.getMovieId() + "|" + m.getTitle() + "|" + m.getGenre() + "|" +
                         m.getDuration() + "|" + m.getAgeRating() + "|" + m.getStatus());
-                bw.newLine();
+                bw.newLine();//one line one movie
             }
         } catch (Exception e) {
             System.out.println("Error saving movies.");
         }
-        // counter is saved in generateNextId, but we also save it here for safety
         saveCounter();
     }
 
-    // ==================== CRUD OPERATIONS ====================
+    //methods
     public static void addMovie(Movie m) {
         movieList.add(m);
         saveToFile();
@@ -193,7 +198,7 @@ public class Movie {
             return;
         }
 
-        clearScreen();
+        Utils.clearScreen(20);
 
         System.out.println("Current movie info:");
         System.out.println("---------------------------------");
@@ -241,7 +246,7 @@ public class Movie {
             System.out.println("0. Exit");
             System.out.print("Enter your choice (0-" + i + "): ");
 
-            int choice = getIntRange(scanner, 0, i);
+            int choice = Utils.getIntRange(scanner, 0, i);
 
             if (choice == 0) return;
 
@@ -257,12 +262,12 @@ public class Movie {
                 title = g + " Movies";
             }
 
-            clearScreenLarge();
+            Utils.clearScreen(80);
             printTable(list, title);
 
             System.out.print("Press Enter to return...");
             scanner.nextLine();
-            clearScreenLarge();
+            Utils.clearScreen(80);
         }
     }
 
@@ -329,7 +334,7 @@ public class Movie {
             System.out.println((i + 1) + ". " + VALID_GENRES[i]);
         }
         System.out.print("Enter your choice (1-12): ");
-        int c = getIntRange(scanner, 1, VALID_GENRES.length);
+        int c = Utils.getIntRange(scanner, 1, VALID_GENRES.length);
         return VALID_GENRES[c - 1];
     }
 
@@ -339,39 +344,8 @@ public class Movie {
             System.out.println((i + 1) + ". " + VALID_STATUSES[i]);
         }
         System.out.print("Enter your choice (1-3): ");
-        int c = getIntRange(scanner, 1, VALID_STATUSES.length);
+        int c = Utils.getIntRange(scanner, 1, VALID_STATUSES.length);
         return VALID_STATUSES[c - 1];
     }
 
-    // ==================== UTILITY METHODS ====================
-    private static int getInt(Scanner sc) {
-        while (!sc.hasNextInt()) {
-            System.out.print("Please enter a number: ");
-            sc.next();
-        }
-        int v = sc.nextInt();
-        sc.nextLine();
-        return v;
-    }
-
-    private static int getIntRange(Scanner sc, int min, int max) {
-        while (true) {
-            int v = getInt(sc);
-            if (v >= min && v <= max) return v;
-            System.out.printf("Please enter a number between %d and %d: ", min, max);
-        }
-    }
-
-    private static void clearScreen() {
-        for (int i = 0; i < 20; i++) System.out.println();
-    }
-
-    private static void clearScreenLarge() {
-        for (int i = 0; i < 80; i++) System.out.println();
-    }
-
-    private static String truncate(String s, int len) {
-        if (s.length() <= len) return s;
-        return s.substring(0, len - 3) + "...";
-    }
 }
