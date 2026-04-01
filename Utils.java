@@ -12,6 +12,11 @@ public class Utils {
         System.out.print("\nPress Enter to continue...");
         new Scanner(System.in).nextLine();
     }
+    //pause (overloading)
+    public static void pause(String message) {
+        System.out.print("\n" + message);
+        new Scanner(System.in).nextLine();
+    }
 
     //check Int input
     public static int getInt(Scanner sc) {
