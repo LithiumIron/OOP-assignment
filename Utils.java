@@ -32,4 +32,10 @@ public class Utils {
             System.out.printf("Please enter a number between %d and %d: ", min, max);
         }
     }
+
+    //truncate
+    public static String truncate(String s, int len) {
+        if (s.length() <= len) return s;
+        return s.substring(0, len - 3) + "...";
+    }
 }
