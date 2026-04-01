@@ -10,10 +10,10 @@ public class mh_main {
 
         boolean exit = false;
         while (!exit) {//no exit
-            clearScreen(100);
+            Utils.clearScreen(100);
             printMainMenu();
 
-            int choice = getIntInput(0, 2);
+            int choice = Utils.getIntInput(0, 2);
             scanner.nextLine();
 
             switch (choice) {
@@ -44,10 +44,10 @@ public class mh_main {
         boolean back = false;
 
         while (!back) {
-            clearScreen(20);
+            Utils.clearScreen(20);
             printMovieMenu();
 
-            int choice = getIntInput(0, 6);
+            int choice = Utils.getIntInput(0, 6);
             scanner.nextLine();
 
             switch (choice) {
@@ -80,21 +80,21 @@ public class mh_main {
     }
 
     private static void addMovie() {
-        clearScreen(20);
+        Utils.clearScreen(20);
         System.out.println("--- Add New Movie ---");
 
         System.out.print("Title: ");
         String title = scanner.nextLine().trim();
 
-        clearScreen(20);
+        Utils.clearScreen(20);
         String genre = Movie.selectGenre(scanner);
 
         System.out.print("Duration (minutes): ");
-        int duration = getIntInput(1, 500);
+        int duration = Utils.getIntInput(1, 500);
         scanner.nextLine();
 
         System.out.print("Age Rating: ");
-        int rating = getIntInput(0, 100);
+        int rating = Utils.getIntInput(0, 100);
         scanner.nextLine();
 
         String status = Movie.selectStatus(scanner);
@@ -110,7 +110,7 @@ public class mh_main {
     }
 
     private static void deleteMovie() {
-        clearScreen(20);
+        Utils.clearScreen(20);
         Movie.displayAllMovies();
 
         System.out.print("Enter Movie ID to delete: ");
@@ -136,7 +136,7 @@ public class mh_main {
     }
 
     private static void searchMovie() {
-    	clearScreen(40);
+    	Utils.clearScreen(40);
         System.out.println("Search by movie title.\nExample: Minion, ion, mi, i");
         System.out.print("\nEnter keyword: ");
         String key = scanner.nextLine();
@@ -160,7 +160,7 @@ public class mh_main {
         boolean back = false;
 
         while (!back) {
-            clearScreen(20);
+            Utils.clearScreen(20);
             printHallMenu();
 
             int choice = getIntInput(0, 5);
@@ -196,7 +196,7 @@ public class mh_main {
     }
 
     private static void addHall() {
-        clearScreen(20);
+        Utils.clearScreen(20);
 
         System.out.println("--- Select Hall Type ---");
         System.out.println("1. Small");
@@ -204,7 +204,7 @@ public class mh_main {
         System.out.println("3. Large");
         System.out.print("Enter choice: ");
 
-        int type = getIntInput(1, 3);
+        int type = Utils.getIntInput(1, 3);
         Hall.addHallByType(type);
 
         System.out.print("\nPress Enter to continue...");
@@ -214,7 +214,7 @@ public class mh_main {
 
     // ================== EXIT ==================
     private static void showExitScreen() {
-        clearScreen(100);
+        Utils.clearScreen(100);
 
         System.out.println(" /$$$$$$$                            /$$$$$$$                            /$$");
         System.out.println("| $$__  $$                          | $$__  $$                          | $$");
@@ -235,21 +235,5 @@ public class mh_main {
         System.out.println("\nProcess completed.");
     }
 
-    // ================== UTILS ==================
-    private static int getIntInput(int min, int max) {
-        while (true) {
-            if (scanner.hasNextInt()) {
-                int v = scanner.nextInt();
-                if (v >= min && v <= max) return v;
-                System.out.printf("Please enter a number between %d and %d: ", min, max);
-            } else {
-                System.out.print("Invalid input. Please enter a number: ");
-                scanner.next();
-            }
-        }
-    }
-
-    private static void clearScreen(int lines) {
-        for (int i = 0; i < lines; i++) System.out.println();
-    }
+    
 }
