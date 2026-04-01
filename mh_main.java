@@ -1,7 +1,7 @@
 import java.util.Scanner;
 import java.util.List;
 
-public class MinHui {
+public class mh_main {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
