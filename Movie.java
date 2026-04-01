@@ -82,7 +82,7 @@ public class Movie {
         //saves the updated counter value to ensure IDs remain unique
         return id;
     }
-
+    
     private static void saveCounter() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(COUNTER_FILE))) {
             bw.write(String.valueOf(nextIdNumber));
@@ -328,6 +328,7 @@ public class Movie {
     }
 
     // ==================== USER INPUT METHODS ====================
+    //select movie genre
     public static String selectGenre(Scanner scanner) {
         System.out.println("\n--- Select Genre ---");
         for (int i = 0; i < VALID_GENRES.length; i++) {
@@ -338,6 +339,7 @@ public class Movie {
         return VALID_GENRES[c - 1];
     }
 
+    //select movie status
     public static String selectStatus(Scanner scanner) {
         System.out.println("\n--- Select Status ---");
         for (int i = 0; i < VALID_STATUSES.length; i++) {
