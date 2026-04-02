@@ -17,7 +17,6 @@ public class mh_main {
             printMainMenu();
 
             int choice = Utils.getIntRange(scan, 0, 2);
-            scan.nextLine();//clear buffer
 
             switch (choice) {
                 case 1:manageMovies();break;
@@ -54,7 +53,6 @@ public class mh_main {
             printMovieMenu();
 
             int choice = Utils.getIntRange(scan, 0, 6);
-            scan.nextLine();
 
             switch (choice) {
                 case 1:addMovie();break;
@@ -103,11 +101,9 @@ public class mh_main {
 
         System.out.print("Duration (minutes): ");
         int duration = Utils.getIntRange(scan, 1, 500);
-        scan.nextLine();
 
         System.out.print("Age Rating: ");
         int rating = Utils.getIntRange(scan, 0, 100);
-        scan.nextLine();
 
         String status = Movie.selectStatus(scan);
 
@@ -178,7 +174,6 @@ public class mh_main {
             printHallMenu();
 
             int choice = Utils.getIntRange(scan, 0, 5);
-            scan.nextLine();
 
             switch (choice) {
                 case 1:
