@@ -9,7 +9,6 @@ import java.util.*;
  * unique IDs even after halls are deleted.
  */
 public class Hall {
-    Scanner scan = new Scanner(System.in);
     
     // ==================== CONSTANTS & STATIC FIELDS ====================
     private static final String FILE_NAME = "halls.txt";
@@ -135,11 +134,11 @@ public class Hall {
 
     // ==================== CRUD OPERATIONS ====================
     public static void addHallByType(int typeChoice) {
-        String type = switch (typeChoice) {
-            case 1: "Small";break;
-            case 2: "Medium";break;
-            case 3: "Large";break;
-            default: "";
+        String type = "";
+        switch (typeChoice) {
+            case 1: type = "Small";break;
+            case 2: type = "Medium";break;
+            case 3: type = "Large";break;
         };
 
         Hall h = new Hall(type);
@@ -158,7 +157,7 @@ public class Hall {
         return null;
     }
 
-    public static void deleteHallPrompt() {
+    public static void deleteHallPrompt(Scanner scan) {
         displayAllHalls();
 
         System.out.print("Enter Hall ID to delete: ");
@@ -187,7 +186,7 @@ public class Hall {
     // ==================== DISPLAY METHODS ====================
 
     //---display hall summary---
-    public static void displayHallSummary() {
+    public static void displayHallSummary(Scanner scan) {
         int small = 0, medium = 0, large = 0;
 
         for (Hall h : hallList) {
@@ -219,7 +218,7 @@ public class Hall {
     }
 
     //---display All Hall Details---
-    public static void displayAllHallsDetailed() {
+    public static void displayAllHallsDetailed(Scanner scan) {
         Utils.clearScreen(80);
 
         System.out.println("------------------------------------------");
@@ -239,7 +238,7 @@ public class Hall {
     }
 
     // ==================== SEAT MAP DISPLAY ====================
-    public static void displaySeatMapMenu() {
+    public static void displaySeatMapMenu(Scanner scan) {
         while (true) {
             Utils.clearScreen(80);
 
@@ -257,9 +256,9 @@ public class Hall {
             Utils.clearScreen(80);
 
             switch (c) {
-                case 1 -> printSmallHall();
-                case 2 -> printMediumHall();
-                case 3 -> printLargeHall();
+                case 1: printSmallHall();break;
+                case 2: printMediumHall();break;
+                case 3: printLargeHall();break;
             }
 
             Utils.pause(scan);
