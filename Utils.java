@@ -8,14 +8,9 @@ public class Utils {
     }
   
     //pause
-    public static void pause() {
+    public static void pause(Scanner sc) {
         System.out.print("\nPress Enter to continue...");
-        new Scanner(System.in).nextLine();
-    }
-    //pause (overloading)
-    public static void pause(String message) {
-        System.out.print("\n" + message);
-        new Scanner(System.in).nextLine();
+        sc.nextLine();
     }
 
     //check Int input
