@@ -11,46 +11,45 @@ import java.util.*;
 public class Hall {
     
     // ==================== CONSTANTS & STATIC FIELDS ====================
-    private static final String FILE_NAME = "halls.txt";
-    private static final String COUNTER_FILE = "hall_counter.txt";
+    private static final String FILE_NAME = "halls.txt";//store hall data permanently
+    private static final String COUNTER_FILE = "hall_counter.txt";//store next available hall id number
     private static List<Hall> hallList = new ArrayList<>();
     private static int nextIdNumber = 1;   // next available ID number (H001 -> 1)
 
-    // ==================== INSTANCE FIELDS ====================
+    // ==================== Data fields====================
     private String hallId;
     private String type; // Small / Medium / Large
 
-    // ==================== CONSTRUCTORS ====================
+    // ==================== Constructors ====================
+
+    //no agr cons
     public Hall() {
         this("");
     }
+    //cons used when loading data from file
     public Hall(String hallId, String type) {
         this.hallId = hallId;
         this.type = type;
     }
-
+    //cons used when creating new hall (auto-generated id)
     public Hall(String type) {
         this.hallId = generateNextId();
         this.type = type;
     }
 
-    // ==================== GETTERS ====================
+    // ==================== Getter ====================
     public String getHallId() { return hallId; }
     public String getType()   { return type; }
 
-    // ==================== SETTERS ====================
+    // ==================== Setter ====================
     public void setType(String type) { this.type = type; }
 
-    // ==================== STRING REPRESENTATION ====================
+    // ==================== to string ====================
     public String toString() {
         return "ID: " + getHallId() + " | Type: " + getType();
     }
 
-    // ==================== ID GENERATION (persistent counter) ====================
-    /**
-     * Generates next hall ID using a persistent counter that never decreases.
-     * Format: H001, H002, ...
-     */
+    //generate next hall id
     private static String generateNextId() {
         String id = String.format("H%03d", nextIdNumber);
         nextIdNumber++;          // increment for next hall
@@ -58,21 +57,16 @@ public class Hall {
         return id;
     }
 
-    /**
-     * Saves the current counter value to a separate file.
-     */
+    //save counter value into file
     private static void saveCounter() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(COUNTER_FILE))) {
-            bw.write(String.valueOf(nextIdNumber));
+            bw.write(String.valueOf(nextIdNumber));//convert num to string
         } catch (IOException e) {
             System.out.println("Error saving hall counter.");
         }
     }
 
-    /**
-     * Loads the counter from file. If file doesn't exist, initializes counter
-     * based on the maximum ID found in the hall list (for backward compatibility).
-     */
+    //load counter from file
     private static void loadCounter() {
         File counterFile = new File(COUNTER_FILE);
         if (counterFile.exists()) {
@@ -87,7 +81,7 @@ public class Hall {
             }
         }
 
-        // If counter file doesn't exist, calculate from existing halls
+        // If counter file doesn't exist, calculate from existing hall ids
         int max = 0;
         for (Hall h : hallList) {
             int num = Integer.parseInt(h.getHallId().substring(1));
@@ -98,6 +92,7 @@ public class Hall {
     }
 
     // ==================== FILE OPERATIONS ====================
+
     public static void loadFromFile() {
         // First load halls
         File file = new File(FILE_NAME);
@@ -105,7 +100,7 @@ public class Hall {
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 String line;
                 while ((line = br.readLine()) != null) {
-                    String[] parts = line.split("\\|");
+                    String[] parts = line.split("\\|");//split using "|"
                     if (parts.length == 2) {
                         hallList.add(new Hall(parts[0], parts[1]));
                     }
@@ -132,7 +127,9 @@ public class Hall {
         saveCounter();
     }
 
-    // ==================== CRUD OPERATIONS ====================
+    // ==================== METHODS ====================
+
+    //---add hall by type---
     public static void addHallByType(int typeChoice) {
         String type = "";
         switch (typeChoice) {
@@ -150,6 +147,7 @@ public class Hall {
         System.out.println("Type: " + h.getType());
     }
 
+    //---find hall by id---
     private static Hall findHallById(String id) {
         for (Hall h : hallList) {
             if (h.getHallId().equalsIgnoreCase(id)) return h;
@@ -157,6 +155,7 @@ public class Hall {
         return null;
     }
 
+    //---delete hall prompt---
     public static void deleteHallPrompt(Scanner scan) {
         displayAllHalls();
 
