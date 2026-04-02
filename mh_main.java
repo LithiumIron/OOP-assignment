@@ -40,6 +40,8 @@ public class mh_main {
     }
 
     // ================== MOVIE ==================
+
+    // Manages Movies
     private static void manageMovies() {
         boolean back = false;
 
@@ -57,7 +59,7 @@ public class mh_main {
                 case 4:deleteMovie();break;
                 case 5:searchMovie();break;
                 case 6:{
-                    clearScreen(20);
+                    Utils.clearScreen(20);
                     Movie.displayMovieSummary();
                     System.out.print("\nPress Enter to return...");
                     scanner.nextLine();
@@ -125,8 +127,7 @@ public class mh_main {
             System.out.println("Deletion cancelled.");
         }
 
-        System.out.print("\nPress Enter to continue...");
-        scanner.nextLine();
+        Utils.pause();
     }
 
     private static void updateMovie() {
@@ -151,11 +152,12 @@ public class mh_main {
             }
         }
 
-        System.out.print("\nPress Enter to continue...");
-        scanner.nextLine();
+        Utils.pause();
     }
 
     // ================== HALL ==================
+
+    // Manages Halls
     private static void manageHalls() {
         boolean back = false;
 
@@ -163,7 +165,7 @@ public class mh_main {
             Utils.clearScreen(20);
             printHallMenu();
 
-            int choice = getIntInput(0, 5);
+            int choice = Utils.getIntRange(scanner, 0, 5);
             scanner.nextLine();
 
             switch (choice) {
@@ -207,9 +209,7 @@ public class mh_main {
         int type = Utils.getIntInput(1, 3);
         Hall.addHallByType(type);
 
-        System.out.print("\nPress Enter to continue...");
-        scanner.nextLine();
-        scanner.nextLine();
+        Utils.pause();
     }
 
     // ================== EXIT ==================
