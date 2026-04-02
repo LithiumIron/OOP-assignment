@@ -9,6 +9,8 @@ import java.util.*;
  * unique IDs even after halls are deleted.
  */
 public class Hall {
+    Scanner scan = new Scanner(System.in);
+    
     // ==================== CONSTANTS & STATIC FIELDS ====================
     private static final String FILE_NAME = "halls.txt";
     private static final String COUNTER_FILE = "hall_counter.txt";
@@ -134,10 +136,10 @@ public class Hall {
     // ==================== CRUD OPERATIONS ====================
     public static void addHallByType(int typeChoice) {
         String type = switch (typeChoice) {
-            case 1 -> "Small";
-            case 2 -> "Medium";
-            case 3 -> "Large";
-            default -> "";
+            case 1: "Small";break;
+            case 2: "Medium";break;
+            case 3: "Large";break;
+            default: "";
         };
 
         Hall h = new Hall(type);
@@ -156,21 +158,21 @@ public class Hall {
         return null;
     }
 
-    public static void deleteHallPrompt(Scanner scanner) {
+    public static void deleteHallPrompt() {
         displayAllHalls();
 
         System.out.print("Enter Hall ID to delete: ");
-        String id = scanner.nextLine().trim();
+        String id = scan.nextLine().trim();
 
         Hall h = findHallById(id);
         if (h == null) {
             System.out.println("Hall ID not found!");
-            Utils.pause();
+            Utils.pause(scan);
             return;
         }
 
         System.out.print("Are you sure? (y/n): ");
-        String confirm = scanner.nextLine();
+        String confirm = scan.nextLine();
 
         if (confirm.equalsIgnoreCase("y")) {
             hallList.remove(h);
@@ -183,14 +185,16 @@ public class Hall {
     }
 
     // ==================== DISPLAY METHODS ====================
+
+    //---display hall summary---
     public static void displayHallSummary() {
         int small = 0, medium = 0, large = 0;
 
         for (Hall h : hallList) {
             switch (h.getType()) {
-                case "Small" -> small++;
-                case "Medium" -> medium++;
-                case "Large" -> large++;
+                case "Small": small++;break;
+                case "Medium": medium++;break;
+                case "Large": large++;break;
             }
         }
 
@@ -202,9 +206,10 @@ public class Hall {
         System.out.println("Total Number of Halls: " + hallList.size());
         System.out.println("================================");
 
-        Utils.pause();
+        Utils.pause(scan);
     }
 
+    //---display all halls---
     private static void displayAllHalls() {
         System.out.println("\n===== ALL HALLS =====");
         for (Hall h : hallList) {
@@ -213,7 +218,8 @@ public class Hall {
         System.out.println("=====================\n");
     }
 
-    public static void displayAllHallsDetailed(Scanner scanner) {
+    //---display All Hall Details---
+    public static void displayAllHallsDetailed() {
         Utils.clearScreen(80);
 
         System.out.println("------------------------------------------");
@@ -229,11 +235,11 @@ public class Hall {
 
         System.out.println("\nTotal halls: " + hallList.size());
 
-        Utils.pause();
+        Utils.pause(scan);
     }
 
     // ==================== SEAT MAP DISPLAY ====================
-    public static void displaySeatMapMenu(Scanner scanner) {
+    public static void displaySeatMapMenu() {
         while (true) {
             Utils.clearScreen(80);
 
@@ -244,7 +250,7 @@ public class Hall {
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
 
-            int c = Utils.getIntRange(scanner, 0, 3);
+            int c = Utils.getIntRange(scan, 0, 3);
 
             if (c == 0) return;
 
@@ -256,7 +262,7 @@ public class Hall {
                 case 3 -> printLargeHall();
             }
 
-            Utils.pause();
+            Utils.pause(scan);
         }
     }
 
