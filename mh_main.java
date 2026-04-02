@@ -5,16 +5,19 @@ public class mh_main {
     private static Scanner scan = new Scanner(System.in);
 
     public static void main(String[] args) {
+
+        //load data from files at program start
         Movie.loadFromFile();
         Hall.loadFromFile();
 
         boolean exit = false;
+
         while (!exit) {//no exit
             Utils.clearScreen(100);
             printMainMenu();
 
             int choice = Utils.getIntRange(scan, 0, 2);
-            scan.nextLine();
+            scan.nextLine();//clear buffer
 
             switch (choice) {
                 case 1:manageMovies();break;
@@ -29,6 +32,7 @@ public class mh_main {
     }
 
     // ================== MAIN MENU ==================
+
     private static void printMainMenu() {
         System.out.println("========================================");
         System.out.println("   CINEMA MANAGEMENT SYSTEM - STAFF    ");
