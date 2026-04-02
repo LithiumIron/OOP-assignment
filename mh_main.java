@@ -2,7 +2,7 @@ import java.util.Scanner;
 import java.util.List;
 
 public class mh_main {
-    private static Scanner scanner = new Scanner(System.in);
+    private static Scanner scan = new Scanner(System.in);
 
     public static void main(String[] args) {
         Movie.loadFromFile();
@@ -14,7 +14,7 @@ public class mh_main {
             printMainMenu();
 
             int choice = Utils.getIntInput(0, 2);
-            scanner.nextLine();
+            scan.nextLine();
 
             switch (choice) {
                 case 1:manageMovies();break;
@@ -25,7 +25,7 @@ public class mh_main {
                 }break;
             }
         }
-        scanner.close();
+        scan.close();
     }
 
     // ================== MAIN MENU ==================
@@ -41,7 +41,7 @@ public class mh_main {
 
     // ================== MOVIE ==================
 
-    // Manages Movies
+    //---Manages Movies---
     private static void manageMovies() {
         boolean back = false;
 
@@ -50,11 +50,11 @@ public class mh_main {
             printMovieMenu();
 
             int choice = Utils.getIntInput(0, 6);
-            scanner.nextLine();
+            scan.nextLine();
 
             switch (choice) {
                 case 1:addMovie();break;
-                case 2:Movie.displayMoviesMenu(scanner);break;
+                case 2:Movie.displayMoviesMenu(scan);break;
                 case 3:updateMovie();break;
                 case 4:deleteMovie();break;
                 case 5:searchMovie();break;
@@ -62,13 +62,14 @@ public class mh_main {
                     Utils.clearScreen(20);
                     Movie.displayMovieSummary();
                     System.out.print("\nPress Enter to return...");
-                    scanner.nextLine();
+                    scan.nextLine();
                 }break;
                 case 0:back = true;break;
             }
         }
     }
 
+    //---Display Movie Menu---
     private static void printMovieMenu() {
         System.out.println("--- MOVIE MANAGEMENT ---");
         System.out.println("1. Add New Movie");
@@ -81,25 +82,30 @@ public class mh_main {
         System.out.print("Enter your choice: ");
     }
 
+    //---add movie---
     private static void addMovie() {
         Utils.clearScreen(20);
         System.out.println("--- Add New Movie ---");
 
         System.out.print("Title: ");
-        String title = scanner.nextLine().trim();
+        String title = scan.nextLine().trim();
+        if (title.isEmpty()) {
+            System.out.println("Title cannot be empty!");
+            return;
+        }
 
         Utils.clearScreen(20);
-        String genre = Movie.selectGenre(scanner);
+        String genre = Movie.selectGenre(scan);
 
         System.out.print("Duration (minutes): ");
         int duration = Utils.getIntInput(1, 500);
-        scanner.nextLine();
+        scan.nextLine();
 
         System.out.print("Age Rating: ");
         int rating = Utils.getIntInput(0, 100);
-        scanner.nextLine();
+        scan.nextLine();
 
-        String status = Movie.selectStatus(scanner);
+        String status = Movie.selectStatus(scan);
 
         Movie m = new Movie(title, genre, duration, rating, status);
         Movie.addMovie(m);
@@ -107,19 +113,19 @@ public class mh_main {
         System.out.println("\nMovie Added:");
         System.out.println(m);
 
-        System.out.print("\nPress Enter to continue...");
-        scanner.nextLine();
+        Utils.pause(scan);
     }
 
+    //---delete movie---
     private static void deleteMovie() {
         Utils.clearScreen(20);
         Movie.displayAllMovies();
 
         System.out.print("Enter Movie ID to delete: ");
-        String id = scanner.nextLine().trim();
+        String id = scan.nextLine().trim();
 
         System.out.print("Are you sure? (y/n): ");
-        String confirm = scanner.nextLine();
+        String confirm = scan.nextLine();
 
         if (confirm.equalsIgnoreCase("y")) {
             Movie.deleteMovie(id);
@@ -127,20 +133,22 @@ public class mh_main {
             System.out.println("Deletion cancelled.");
         }
 
-        Utils.pause();
+        Utils.pause(scan);
     }
 
+    //---update movie---
     private static void updateMovie() {
         System.out.print("Enter Movie ID: ");
-        String id = scanner.nextLine();
-        Movie.updateMovie(id, scanner);
+        String id = scan.nextLine();
+        Movie.updateMovie(id, scan);
     }
 
+    //---search movie---
     private static void searchMovie() {
     	Utils.clearScreen(40);
         System.out.println("Search by movie title.\nExample: Minion, ion, mi, i");
         System.out.print("\nEnter keyword: ");
-        String key = scanner.nextLine();
+        String key = scan.nextLine();
 
         List<Movie> results = Movie.findMoviesByTitle(key);
 
@@ -152,12 +160,12 @@ public class mh_main {
             }
         }
 
-        Utils.pause();
+        Utils.pause(scan);
     }
 
     // ================== HALL ==================
 
-    // Manages Halls
+    //---Manages Halls---
     private static void manageHalls() {
         boolean back = false;
 
@@ -165,8 +173,8 @@ public class mh_main {
             Utils.clearScreen(20);
             printHallMenu();
 
-            int choice = Utils.getIntRange(scanner, 0, 5);
-            scanner.nextLine();
+            int choice = Utils.getIntRange(scan, 0, 5);
+            scan.nextLine();
 
             switch (choice) {
                 case 1:
@@ -175,17 +183,18 @@ public class mh_main {
                 	clearScreen(100);
                 	Hall.displayHallSummary();break;
                 case 3:
-                	Hall.deleteHallPrompt(scanner);break;
+                	Hall.deleteHallPrompt(scan);break;
                 case 4:
-                	Hall.displaySeatMapMenu(scanner);break;
+                	Hall.displaySeatMapMenu(scan);break;
                 case 5:
-                	Hall.displayAllHallsDetailed(scanner);break;
+                	Hall.displayAllHallsDetailed(scan);break;
                 case 0:
                 	back = true;break;
             }
         }
     }
 
+    //---Display Hall Menu---
     private static void printHallMenu() {
         System.out.println("--- HALL MANAGEMENT ---");
         System.out.println("1. Add New Hall");
@@ -197,6 +206,7 @@ public class mh_main {
         System.out.print("Enter your choice: ");
     }
 
+    //---add hall---
     private static void addHall() {
         Utils.clearScreen(20);
 
@@ -209,7 +219,7 @@ public class mh_main {
         int type = Utils.getIntInput(1, 3);
         Hall.addHallByType(type);
 
-        Utils.pause();
+        Utils.pause(scan);
     }
 
     // ================== EXIT ==================
