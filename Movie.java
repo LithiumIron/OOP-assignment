@@ -2,6 +2,7 @@ import java.io.*;//import classess for file io
 import java.util.*;//import utility classes such as List, ArrayList and Scanner
 
 public class Movie {
+    Scanner scan = new Scanner(System.in);
     
     private static final String FILE_NAME = "movies.txt";//name of the file used to store movie data
     private static final String COUNTER_FILE = "movie_counter.txt";//file that stores the next available movie ID number
@@ -191,7 +192,7 @@ public class Movie {
         return result;
     }
 
-    public static void updateMovie(String id, Scanner scanner) {
+    public static void updateMovie(String id) {
         Movie movie = findMovieById(id);
         if (movie == null) {
             System.out.println("Movie ID not found!");
@@ -211,7 +212,7 @@ public class Movie {
         System.out.println("---------------------------------");
 
         System.out.println("\n--- Update Movie Status ---");
-        String newStatus = selectStatus(scanner);
+        String newStatus = selectStatus(scan);
 
         movie.setStatus(newStatus);
         saveToFile();
@@ -219,8 +220,7 @@ public class Movie {
         System.out.println("\nMovie status updated successfully!");
         System.out.println(movie.toString());
 
-        System.out.print("\nPress Enter to return...");
-        scanner.nextLine();
+        Utils.pause(scan);
     }
 
     // ==================== DISPLAY METHODS ====================
@@ -228,7 +228,7 @@ public class Movie {
         printTable(movieList, "All Movies");
     }
 
-    public static void displayMoviesMenu(Scanner scanner) {
+    public static void displayMoviesMenu() {
         while (true) {
             Set<String> set = new TreeSet<>();
             for (Movie m : movieList) set.add(m.getGenre());
@@ -246,7 +246,7 @@ public class Movie {
             System.out.println("0. Exit");
             System.out.print("Enter your choice (0-" + i + "): ");
 
-            int choice = Utils.getIntRange(scanner, 0, i);
+            int choice = Utils.getIntRange(scan, 0, i);
 
             if (choice == 0) return;
 
@@ -265,8 +265,7 @@ public class Movie {
             Utils.clearScreen(80);
             printTable(list, title);
 
-            System.out.print("Press Enter to return...");
-            scanner.nextLine();
+            Utils.pause(scan);
             Utils.clearScreen(80);
         }
     }
@@ -329,24 +328,24 @@ public class Movie {
 
     // ==================== USER INPUT METHODS ====================
     //select movie genre
-    public static String selectGenre(Scanner scanner) {
+    public static String selectGenre() {
         System.out.println("\n--- Select Genre ---");
         for (int i = 0; i < VALID_GENRES.length; i++) {
             System.out.println((i + 1) + ". " + VALID_GENRES[i]);
         }
         System.out.print("Enter your choice (1-12): ");
-        int c = Utils.getIntRange(scanner, 1, VALID_GENRES.length);
+        int c = Utils.getIntRange(scan, 1, VALID_GENRES.length);
         return VALID_GENRES[c - 1];
     }
 
-    //select movie status
-    public static String selectStatus(Scanner scanner) {
+    //---select movie status---
+    public static String selectStatus() {
         System.out.println("\n--- Select Status ---");
         for (int i = 0; i < VALID_STATUSES.length; i++) {
             System.out.println((i + 1) + ". " + VALID_STATUSES[i]);
         }
         System.out.print("Enter your choice (1-3): ");
-        int c = Utils.getIntRange(scanner, 1, VALID_STATUSES.length);
+        int c = Utils.getIntRange(scan, 1, VALID_STATUSES.length);
         return VALID_STATUSES[c - 1];
     }
 
