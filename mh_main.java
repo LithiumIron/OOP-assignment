@@ -88,9 +88,10 @@ public class mh_main {
 
         System.out.print("Title: ");
         String title = scan.nextLine().trim();
-        if (title.isEmpty()) {
-            System.out.println("Title cannot be empty!");
-            return;
+        while (title.isEmpty()){
+            System.out.println("Title cannot be emplty!");
+            System.out.println("Title: ");
+            title = scan.nextLine().trim();
         }
 
         Utils.clearScreen(20);
