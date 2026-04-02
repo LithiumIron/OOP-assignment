@@ -34,8 +34,8 @@ public class Utils {
     }
 
     //truncate
-    public static String truncate(String s, int len) {
+    public static String truncate(String s, int len) {//shorten string if it is too loong
         if (s.length() <= len) return s;
-        return s.substring(0, len - 3) + "...";
+        return s.substring(0, len - 3) + "...";//truncate string and add"..." if it exceeds length
     }
 }
