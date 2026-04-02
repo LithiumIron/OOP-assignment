@@ -13,7 +13,7 @@ public class mh_main {
             Utils.clearScreen(100);
             printMainMenu();
 
-            int choice = Utils.getIntInput(0, 2);
+            int choice = Utils.getIntInput(scan, 0, 2);
             scan.nextLine();
 
             switch (choice) {
@@ -49,7 +49,7 @@ public class mh_main {
             Utils.clearScreen(20);
             printMovieMenu();
 
-            int choice = Utils.getIntInput(0, 6);
+            int choice = Utils.getIntInput(scan, 0, 6);
             scan.nextLine();
 
             switch (choice) {
@@ -61,8 +61,7 @@ public class mh_main {
                 case 6:{
                     Utils.clearScreen(20);
                     Movie.displayMovieSummary();
-                    System.out.print("\nPress Enter to return...");
-                    scan.nextLine();
+                    Utils.pause(scan);
                 }break;
                 case 0:back = true;break;
             }
@@ -98,11 +97,11 @@ public class mh_main {
         String genre = Movie.selectGenre(scan);
 
         System.out.print("Duration (minutes): ");
-        int duration = Utils.getIntInput(1, 500);
+        int duration = Utils.getIntRange(scan, 1, 500);
         scan.nextLine();
 
         System.out.print("Age Rating: ");
-        int rating = Utils.getIntInput(0, 100);
+        int rating = Utils.getIntRange(scan, 0, 100);
         scan.nextLine();
 
         String status = Movie.selectStatus(scan);
@@ -180,7 +179,7 @@ public class mh_main {
                 case 1:
                 	addHall();break;
                 case 2:
-                	clearScreen(100);
+                	Utils.clearScreen(100);
                 	Hall.displayHallSummary();break;
                 case 3:
                 	Hall.deleteHallPrompt(scan);break;
@@ -216,7 +215,7 @@ public class mh_main {
         System.out.println("3. Large");
         System.out.print("Enter choice: ");
 
-        int type = Utils.getIntInput(1, 3);
+        int type = Utils.getIntRange(scan, 1, 3);
         Hall.addHallByType(type);
 
         Utils.pause(scan);
