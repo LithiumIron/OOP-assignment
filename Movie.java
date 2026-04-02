@@ -2,7 +2,6 @@ import java.io.*;//import classess for file io
 import java.util.*;//import utility classes such as List, ArrayList and Scanner
 
 public class Movie {
-    Scanner scan = new Scanner(System.in);
     
     private static final String FILE_NAME = "movies.txt";//name of the file used to store movie data
     private static final String COUNTER_FILE = "movie_counter.txt";//file that stores the next available movie ID number
@@ -156,7 +155,8 @@ public class Movie {
         saveCounter();
     }
 
-    //methods
+    // =========================== methods ===============================
+    
     public static void addMovie(Movie m) {
         movieList.add(m);
         saveToFile();
@@ -192,7 +192,7 @@ public class Movie {
         return result;
     }
 
-    public static void updateMovie(String id) {
+    public static void updateMovie(String id, Scanner scan) {
         Movie movie = findMovieById(id);
         if (movie == null) {
             System.out.println("Movie ID not found!");
@@ -228,7 +228,7 @@ public class Movie {
         printTable(movieList, "All Movies");
     }
 
-    public static void displayMoviesMenu() {
+    public static void displayMoviesMenu(Scanner scan) {
         while (true) {
             Set<String> set = new TreeSet<>();
             for (Movie m : movieList) set.add(m.getGenre());
@@ -315,7 +315,7 @@ public class Movie {
         for (Movie m : list) {
             System.out.printf("%-6s | %-20s | %-12s | %-8d | %-6d | %-12s%n",
                     m.getMovieId(),
-                    truncate(m.getTitle(), 20),
+                    Utils.truncate(m.getTitle(), 20),//shorten the title to 20 char
                     m.getGenre(),
                     m.getDuration(),
                     m.getAgeRating(),
@@ -328,7 +328,7 @@ public class Movie {
 
     // ==================== USER INPUT METHODS ====================
     //select movie genre
-    public static String selectGenre() {
+    public static String selectGenre(Scanner scan) {
         System.out.println("\n--- Select Genre ---");
         for (int i = 0; i < VALID_GENRES.length; i++) {
             System.out.println((i + 1) + ". " + VALID_GENRES[i]);
@@ -339,7 +339,7 @@ public class Movie {
     }
 
     //---select movie status---
-    public static String selectStatus() {
+    public static String selectStatus(Scanner scan) {
         System.out.println("\n--- Select Status ---");
         for (int i = 0; i < VALID_STATUSES.length; i++) {
             System.out.println((i + 1) + ". " + VALID_STATUSES[i]);
