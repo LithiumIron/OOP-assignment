@@ -13,7 +13,7 @@ public class mh_main {
             Utils.clearScreen(100);
             printMainMenu();
 
-            int choice = Utils.getIntInput(scan, 0, 2);
+            int choice = Utils.getIntRange(scan, 0, 2);
             scan.nextLine();
 
             switch (choice) {
@@ -49,7 +49,7 @@ public class mh_main {
             Utils.clearScreen(20);
             printMovieMenu();
 
-            int choice = Utils.getIntInput(scan, 0, 6);
+            int choice = Utils.getIntRange(scan, 0, 6);
             scan.nextLine();
 
             switch (choice) {
@@ -181,7 +181,7 @@ public class mh_main {
                 	addHall();break;
                 case 2:
                 	Utils.clearScreen(100);
-                	Hall.displayHallSummary();break;
+                	Hall.displayHallSummary(scan);break;
                 case 3:
                 	Hall.deleteHallPrompt(scan);break;
                 case 4:
