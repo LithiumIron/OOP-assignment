@@ -1,7 +1,6 @@
 import java.util.Scanner;
 
 public class TestUser {
-    
     public static void main(String[] args) {
     	
     	   //create Scanner object
