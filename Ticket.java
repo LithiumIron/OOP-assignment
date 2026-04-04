@@ -59,14 +59,14 @@ public static String noOfTickets(){
 }
 
 public static String selectHallSize(){
-	return "Please select a hall size\n" +
+	return "Please select a hall size.\n" +
 			"1. Small\n" +
 			"2. Medium\n" +
 			"3. Large\n" +
 			"Enter your choice for hall size : ";
 }
 public static String selectTicketType1(){
-	return "[Small Hall] Please select a ticket type\n" +
+	return "[Small Hall] Please select a ticket type.\n" +
 			"1. Adult  - RM 15.00\n" +
 			"2. Child  - RM 10.00\n" +
 			"3. Senior - RM 10.00\n" +
@@ -74,7 +74,7 @@ public static String selectTicketType1(){
 } 
 
 public static String selectTicketType2(){
-	return "[Medium Hall] Please select a ticket type\n" +
+	return "[Medium Hall] Please select a ticket type.\n" +
 			"1. Adult  - RM 20.00\n" +
 			"2. Child  - RM 12.00\n" +
 			"3. Senior - RM 12.00\n" +
@@ -82,7 +82,7 @@ public static String selectTicketType2(){
 } 
 
 public static String selectTicketType3(){
-	return "[Large Hall] Please select a ticket type\n" +
+	return "[Large Hall] Please select a ticket type.\n" +
 			"1. Adult  - RM 25.00\n" +
 			"2. Child  - RM 15.00\n" +
 			"3. Senior - RM 15.00\n" +
