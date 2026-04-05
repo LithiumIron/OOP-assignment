@@ -15,6 +15,7 @@ public abstract class User {
     // ---------- Getters ----------
     public String getUserID()   { return userID; }
     public String getUsername() { return username; }
+    public String getPassword() { return password; }
     public String getRole()     { return role; }
  
     // ---------- Setters ----------
